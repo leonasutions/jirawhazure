@@ -1,0 +1,39 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <ul class="list-group" id="messagesList">
+    </ul>
+</div>
+
+
+
+
+@section Scripts {
+    <script src="lib/dist/browser/signalr.min.js"></script>
+    <script>
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl("/jirahook")
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        console.log(connection);
+
+        connection.on("BroadcastMessage", (url) => {
+            console.log(url);
+            var msg = "New Issue at Github!!! Issue Title : " + url;
+            var li = document.createElement("li");
+            li.classList.add("list-group-item");
+            li.textContent = msg;
+            document.getElementById("messagesList").appendChild(li);
+        });
+
+        connection.start().catch(function (err) {
+            return console.error(err.toString());
+        });
+
+
+        
+    </script>
+}
